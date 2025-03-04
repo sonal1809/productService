@@ -1,10 +1,14 @@
 package com.example.productservice.services;
 
 import com.example.productservice.dtos.FakeStoreCreateProductRequestDto;
-import com.example.productservice.dtos.FakeStoreCreateProductResponseDto;
+import com.example.productservice.dtos.FakeStoreGetProductResponseDto;
 import com.example.productservice.models.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Service("fakeStoreProductService")
 public class ProductServiceFakeStoreImpl implements ProductService{
@@ -20,19 +24,19 @@ public class ProductServiceFakeStoreImpl implements ProductService{
     @Override
     public Product createProduct(Product product) {
         FakeStoreCreateProductRequestDto request = convertToFakeStoreProductRequestDto(product);
-        FakeStoreCreateProductResponseDto response =  restTemplate.postForObject(
+        FakeStoreGetProductResponseDto response =  restTemplate.postForObject(
                 "https://fakestoreapi.com/products",
                 request,
-                FakeStoreCreateProductResponseDto.class
+                FakeStoreGetProductResponseDto.class
         );
         return convertToProduct(response);
     }
 
     @Override
     public Product getProductById(Long id) {
-        FakeStoreCreateProductResponseDto response = restTemplate.getForObject(
+        FakeStoreGetProductResponseDto response = restTemplate.getForObject(
                 "https://fakestoreapi.com/products/{id}",
-                FakeStoreCreateProductResponseDto.class,
+                FakeStoreGetProductResponseDto.class,
                 id
         );
         if(response != null) {
@@ -41,16 +45,35 @@ public class ProductServiceFakeStoreImpl implements ProductService{
         else return null;
     }
 
+    @Override
+    public List<Product> getAllProduct() {
+        // List<FakeStoreGetProductResponseDto> will not work because at run time java will remove the FakeStoreGetProductResponseDto
+        // from the <> to maintain the backward compatibility
+        // Only information it will have during run time is they need to convert it to list but the list of what
+        // There we will get it array and then will convert to list
+
+        FakeStoreGetProductResponseDto[] response = restTemplate.getForObject(
+                "https://fakestoreapi.com/products",
+                FakeStoreGetProductResponseDto[].class
+        );
+
+        List<FakeStoreGetProductResponseDto> responseDtoList = Stream.of(response).toList();
+        List<Product> products = new ArrayList<>();
+        for(FakeStoreGetProductResponseDto fakeStoreGetProductResponseDto : responseDtoList){
+            products.add(convertToProduct(fakeStoreGetProductResponseDto));
+        }
+        return products;
+    }
 
 
-    Product convertToProduct(FakeStoreCreateProductResponseDto fakeStoreCreateProductResponseDto){
+    Product convertToProduct(FakeStoreGetProductResponseDto fakeStoreGetProductResponseDto){
         Product product = new Product();
-        product.setId(fakeStoreCreateProductResponseDto.getId());
-        product.setImageURL(fakeStoreCreateProductResponseDto.getImage());
-        product.setTitle(fakeStoreCreateProductResponseDto.getTitle());
-        product.setPrice(fakeStoreCreateProductResponseDto.getPrice());
-        product.setDescription(fakeStoreCreateProductResponseDto.getDescription());
-        product.setCategory(fakeStoreCreateProductResponseDto.getCategory());
+        product.setId(fakeStoreGetProductResponseDto.getId());
+        product.setImageURL(fakeStoreGetProductResponseDto.getImage());
+        product.setTitle(fakeStoreGetProductResponseDto.getTitle());
+        product.setPrice(fakeStoreGetProductResponseDto.getPrice());
+        product.setDescription(fakeStoreGetProductResponseDto.getDescription());
+        product.setCategory(fakeStoreGetProductResponseDto.getCategory());
         return product;
     }
 

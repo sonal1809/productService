@@ -2,11 +2,16 @@ package com.example.productservice.controllers;
 
 import com.example.productservice.dtos.CreateProductRequestDto;
 import com.example.productservice.dtos.CreateProductResponseDto;
+import com.example.productservice.dtos.GetAllProductResponseDto;
+import com.example.productservice.dtos.GetProductDto;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -32,8 +37,16 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public void getAllProducts(){
+    public GetAllProductResponseDto getAllProducts(){
+        List<Product> products = productService.getAllProduct();
+        GetAllProductResponseDto response = new GetAllProductResponseDto();
 
+        List<GetProductDto> getProductDto = new ArrayList<>();
+        for(Product product : products){
+            getProductDto.add(GetProductDto.from(product));
+        }
+        response.setProducts(getProductDto);
+        return response;
     }
 
     @GetMapping("/{id}")
