@@ -19,6 +19,42 @@ public class ProductServiceFakeStoreImpl implements ProductService{
 
     @Override
     public Product createProduct(Product product) {
+        FakeStoreCreateProductRequestDto request = convertToFakeStoreProductRequestDto(product);
+        FakeStoreCreateProductResponseDto response =  restTemplate.postForObject(
+                "https://fakestoreapi.com/products",
+                request,
+                FakeStoreCreateProductResponseDto.class
+        );
+        return convertToProduct(response);
+    }
+
+    @Override
+    public Product getProductById(Long id) {
+        FakeStoreCreateProductResponseDto response = restTemplate.getForObject(
+                "https://fakestoreapi.com/products/{id}",
+                FakeStoreCreateProductResponseDto.class,
+                id
+        );
+        if(response != null) {
+            return convertToProduct(response);
+        }
+        else return null;
+    }
+
+
+
+    Product convertToProduct(FakeStoreCreateProductResponseDto fakeStoreCreateProductResponseDto){
+        Product product = new Product();
+        product.setId(fakeStoreCreateProductResponseDto.getId());
+        product.setImageURL(fakeStoreCreateProductResponseDto.getImage());
+        product.setTitle(fakeStoreCreateProductResponseDto.getTitle());
+        product.setPrice(fakeStoreCreateProductResponseDto.getPrice());
+        product.setDescription(fakeStoreCreateProductResponseDto.getDescription());
+        product.setCategory(fakeStoreCreateProductResponseDto.getCategory());
+        return product;
+    }
+
+    FakeStoreCreateProductRequestDto convertToFakeStoreProductRequestDto(Product product){
         FakeStoreCreateProductRequestDto request = new FakeStoreCreateProductRequestDto();
         request.setCategory(product.getCategory());
         request.setDescription(product.getDescription());
@@ -26,22 +62,6 @@ public class ProductServiceFakeStoreImpl implements ProductService{
         request.setPrice(product.getPrice());
         request.setCategory(product.getCategory());
         request.setImage(product.getImageURL());
-
-
-        FakeStoreCreateProductResponseDto response =  restTemplate.postForObject(
-                "https://fakestoreapi.com/products",
-                request,
-                FakeStoreCreateProductResponseDto.class
-        );
-
-        Product product1 = new Product();
-        product1.setId(response.getId());
-        product1.setImageURL(response.getImage());
-        product1.setTitle(response.getTitle());
-        product1.setPrice(response.getPrice());
-        product1.setDescription(response.getDescription());
-        product1.setCategory(response.getCategory());
-
-        return product1;
+        return  request;
     }
 }

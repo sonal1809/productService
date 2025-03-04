@@ -37,8 +37,9 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String getSingleProduct(@PathVariable("id") long id){
-        return "Here is your product" + id;
+    public CreateProductResponseDto getSingleProduct(@PathVariable("id") long id){
+        Product product = productService.getProductById(id);
+       return CreateProductResponseDto.fromProduct(product);
     }
 
     @DeleteMapping("/{id}")

@@ -4,5 +4,8 @@ import com.example.productservice.models.Product;
 
 public interface ProductService {
 
-    Product createProduct(Product product); // Should take exacts attributes , or models
+
+    Product createProduct(Product product);// Should take exacts attributes , or models
+
+    Product getProductById(Long id);
 }

@@ -10,4 +10,9 @@ public class ProductServiceDBImpl implements ProductService{
     public Product createProduct(Product product) {
         return null;
     }
+
+    @Override
+    public Product getProductById(Long id) {
+        return null;
+    }
 }
