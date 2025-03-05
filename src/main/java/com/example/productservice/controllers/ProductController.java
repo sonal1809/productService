@@ -1,5 +1,6 @@
 package com.example.productservice.controllers;
 
+import com.example.productservice.dtos.ErrorResponseDto;
 import com.example.productservice.dtos.product.*;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
@@ -62,7 +63,5 @@ public class ProductController {
         response.setProduct(GetProductDto.from(product));
         return response;
     }
-
-
 
 }
