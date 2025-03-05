@@ -22,4 +22,9 @@ public class ProductServiceDBImpl implements ProductService{
     public List<Product> getAllProduct() {
         return List.of();
     }
+
+    @Override
+    public Product partialUpdateProduct(Long id, Product product) {
+        return null;
+    }
 }
