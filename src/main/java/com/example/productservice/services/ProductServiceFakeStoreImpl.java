@@ -2,6 +2,7 @@ package com.example.productservice.services;
 
 import com.example.productservice.dtos.fakeStore.FakeStoreCreateProductRequestDto;
 import com.example.productservice.dtos.fakeStore.FakeStoreGetProductResponseDto;
+import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -83,17 +84,18 @@ public class ProductServiceFakeStoreImpl implements ProductService{
         product.setTitle(fakeStoreGetProductResponseDto.getTitle());
         product.setPrice(fakeStoreGetProductResponseDto.getPrice());
         product.setDescription(fakeStoreGetProductResponseDto.getDescription());
-        product.setCategory(fakeStoreGetProductResponseDto.getCategory());
+        Category category = new Category();
+        category.setName(fakeStoreGetProductResponseDto.getCategory());
+        product.setCategory(category);
         return product;
     }
 
     FakeStoreCreateProductRequestDto convertToFakeStoreProductRequestDto(Product product){
         FakeStoreCreateProductRequestDto request = new FakeStoreCreateProductRequestDto();
-        request.setCategory(product.getCategory());
+        request.setCategory(product.getCategory().getName());
         request.setDescription(product.getDescription());
         request.setTitle(product.getTitle());
         request.setPrice(product.getPrice());
-        request.setCategory(product.getCategory());
         request.setImage(product.getImageURL());
         return  request;
     }
