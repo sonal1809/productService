@@ -22,7 +22,7 @@ public class ProductController {
 
 
     // Dependency Injection
-    public ProductController(@Qualifier("fakeStoreProductService") ProductService productService){
+    public ProductController(@Qualifier("dbProductService") ProductService productService){
         this.productService = productService;
     }
 
