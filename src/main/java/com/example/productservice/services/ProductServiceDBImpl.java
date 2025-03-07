@@ -20,7 +20,7 @@ public class ProductServiceDBImpl implements ProductService{
 
     @Override
     public List<Product> getAllProduct() {
-        return List.of();
+        return null;
     }
 
     @Override
