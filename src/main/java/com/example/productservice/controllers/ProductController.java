@@ -1,9 +1,11 @@
 package com.example.productservice.controllers;
 
+import com.example.productservice.commons.AuthCommon;
 import com.example.productservice.dtos.product.*;
 import com.example.productservice.exceptions.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -48,12 +50,27 @@ public class ProductController {
         return response;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CreateProductResponseDto> getSingleProduct(@PathVariable("id") long id) throws ProductNotFoundException {
-        return new ResponseEntity<>(
-                CreateProductResponseDto.fromProduct(productService.getProductById(id)),
-                HttpStatus.OK
-        );
+    @GetMapping("/{id}/{tokenValue}")
+    public ResponseEntity<CreateProductResponseDto> getSingleProduct(
+            @PathVariable("id") long id,
+            @PathVariable("tokenValue") String tokenValue
+    ) throws ProductNotFoundException {
+
+        ResponseEntity<CreateProductResponseDto> responseEntity = null;
+
+        if(AuthCommon.validateToken(tokenValue)){
+            responseEntity =  new ResponseEntity<>(
+                    CreateProductResponseDto.fromProduct(productService.getProductById(id)),
+                    HttpStatus.OK
+            );
+        }
+        else{
+            responseEntity = new ResponseEntity<>(
+                    null,
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+        return responseEntity;
     }
 
     @DeleteMapping("/{id}")
