@@ -2,6 +2,7 @@ package com.example.productservice.services;
 
 import com.example.productservice.dtos.fakeStore.FakeStoreCreateProductRequestDto;
 import com.example.productservice.dtos.fakeStore.FakeStoreGetProductResponseDto;
+import com.example.productservice.exceptions.ProductNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class ProductServiceFakeStoreImpl implements ProductService{
     }
 
     @Override
-    public Product getProductById(Long id) {
+    public Product getProductById(Long id) throws ProductNotFoundException {
         FakeStoreGetProductResponseDto response = restTemplate.getForObject(
                 "https://fakestoreapi.com/products/{id}",
                 FakeStoreGetProductResponseDto.class,
@@ -43,7 +44,7 @@ public class ProductServiceFakeStoreImpl implements ProductService{
         if(response != null) {
             return convertToProduct(response);
         }
-        else return null;
+        else throw new ProductNotFoundException(id,"Product not found");
     }
 
     @Override
@@ -74,6 +75,10 @@ public class ProductServiceFakeStoreImpl implements ProductService{
                 FakeStoreGetProductResponseDto.class
         );
         return convertToProduct(productResponseDto);
+    }
+
+    @Override
+    public void search(String keyword, int page, int size, String sortBy) {
     }
 
 

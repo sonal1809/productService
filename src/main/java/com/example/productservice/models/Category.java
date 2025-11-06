@@ -1,5 +1,6 @@
 package com.example.productservice.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class Category extends BaseModel{
     @OneToMany
     private List<Product> featureProduct;
 
+    // @OneToMany(mappedBy = "category" , cascade = CascadeType.REMOVE)
     @OneToMany(mappedBy = "category")
     private List<Product> allProduct;
 }

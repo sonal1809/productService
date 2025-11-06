@@ -1,9 +1,13 @@
 package com.example.productservice.services;
 
+import com.example.productservice.exceptions.ProductNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import com.example.productservice.repositories.CategoryRepository;
 import com.example.productservice.repositories.ProductRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +30,7 @@ public class ProductServiceDBImpl implements ProductService{
     @Override
     public Product createProduct(Product product) {
         Category toBePutInProduct = getCategoryToBeInProduct(product);
+        product.setCategory(toBePutInProduct);
 
         Product savedProduct = productRepository.save(product);
         return savedProduct;
@@ -46,13 +51,18 @@ public class ProductServiceDBImpl implements ProductService{
         else {
             toBePutInProduct = category.get();
         }
-        product.setCategory(toBePutInProduct);
         return  toBePutInProduct;
     }
 
     @Override
-    public Product getProductById(Long id) {
-        return null;
+    public Product getProductById(Long id) throws ProductNotFoundException
+    {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if(optionalProduct.isEmpty()){
+            throw new ProductNotFoundException(id , "Product not found");
+        }
+
+        return optionalProduct.get();
     }
 
     @Override
@@ -85,4 +95,12 @@ public class ProductServiceDBImpl implements ProductService{
         }
         return productRepository.save(productToUpdate);
     }
+
+    public void search(String keyword, int page, int size, String sortBy){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+//        return repository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, pageable);
+
+    }
+
 }
