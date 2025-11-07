@@ -16,7 +16,8 @@ public class AuthCommon {
     }
 
     public static boolean validateToken(String tokenValue){
-        String url = "http://localhost:8080/users/validate/" + tokenValue;
+//        String url = "http://localhost:8080/users/validate/" + tokenValue;
+        String url = "http://UserService/users/validate/" + tokenValue;
         UserDTO userDTO =  restTemplate.getForObject(
                 url,
                 UserDTO.class
